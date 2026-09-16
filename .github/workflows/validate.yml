@@ -21,7 +21,7 @@ jobs:
       # aufweiss01 durch den tatsaechlichen GitHub-Kontonamen ersetzen, in dem
       # C und H (Module C-H) liegen - dokumentierter Einrichtungsschritt.
       - name: Modul C - DTD-/Referenzpruefung
-        uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.0
+        uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.1
         with:
           pfad: .
           root: reuse/reusables.ditamap
