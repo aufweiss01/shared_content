@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE troubleshooting PUBLIC "-//OASIS//DTD DITA 1.3 Troubleshooting//EN" "troubleshooting.dtd">
+<troubleshooting id="ts_reuse" xml:lang="de-DE">
+  <title>Kundenweite wiederverwendbare Troubleshooting-Bausteine</title>
+  <prolog>
+    <metadata>
+      <audience type="" job="" experiencelevel=""/>
+      <othermeta name="lifecycle-stage" content=""/>
+      <othermeta name="status" content="draft"/>
+    </metadata>
+  </prolog>
+  <troublebody>
+    <!-- Beispiel, referenzierbar per conkeyref als ts_reuse/beispiel -->
+    <troubleSolution id="beispiel">
+      <cause>
+        <p>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</p>
+      </cause>
+      <remedy>
+        <steps>
+          <step>
+            <cmd>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</cmd>
+          </step>
+        </steps>
+      </remedy>
+    </troubleSolution>
+  </troublebody>
+</troubleshooting>

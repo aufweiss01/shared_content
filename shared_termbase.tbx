@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE martif SYSTEM "TBXBasiccoreStructV02.dtd">
+<martif type="TBX-Basic" xml:lang="de-DE">
+  <martifHeader>
+    <fileDesc>
+      <titleStmt><title>Kundenweite Terminologie</title></titleStmt>
+      <sourceDesc><p>Kundenweit verbotene Benennungen - shared_termbase.tbx</p></sourceDesc>
+    </fileDesc>
+  </martifHeader>
+  <text><body>
+    <termEntry id="te0001">
+      <langSet xml:lang="de-DE">
+        <tig>
+          <term>Platzhaltertext - durch echten Begriff ersetzen oder loeschen.</term>
+          <termNote type="normativeAuthorization">preferredTerm</termNote>
+        </tig>
+      </langSet>
+    </termEntry>
+  </body></text>
+</martif>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE valuelist-set SYSTEM "valuelists.dtd">
+<valuelist-set>
+  <valuelist field="status">
+    <value name="draft"/>
+    <value name="in-review"/>
+    <value name="approved"/>
+    <value name="outdated"/>
+    <value name="deprecated"/>
+  </valuelist>
+  <valuelist field="translation-status">
+    <value name="translation-requested"/>
+    <value name="in-translation"/>
+    <value name="translation-review"/>
+    <value name="translation-approved"/>
+    <value name="outdated"/>
+  </valuelist>
+  <!-- @product: keine festen Werte - produktabhaengig, pro Kunden-
+       projekt neu festzulegen. Namenskonvention (Modul-E-Vorschlag):
+       klein geschrieben, Wortgrenzen durch _ getrennt, abgeleitet vom
+       zugehoerigen prodname-Wert in project_names.ditamap (A), z.B.
+       wird aus prodname "Muster Anlage X200" der Wert
+       product="muster_anlage_x200". -->
+</valuelist-set>

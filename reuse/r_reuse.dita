@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE reference PUBLIC "-//OASIS//DTD DITA 1.3 Reference//EN" "reference.dtd">
+<reference id="r_reuse" xml:lang="de-DE">
+  <title>Kundenweite wiederverwendbare Reference-Bausteine</title>
+  <prolog>
+    <metadata>
+      <audience type="" job="" experiencelevel=""/>
+      <othermeta name="lifecycle-stage" content=""/>
+      <othermeta name="status" content="draft"/>
+    </metadata>
+  </prolog>
+  <refbody>
+    <!-- Beispiel, referenzierbar per conkeyref als r_reuse/beispiel -->
+    <section id="beispiel">
+      <p>Platzhaltertext - durch echten Baustein ersetzen oder loeschen.</p>
+    </section>
+  </refbody>
+</reference>

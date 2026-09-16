@@ -1,0 +1,68 @@
+name: validierung
+
+# Zwei Trigger (Konfigurationsprotokoll v21, Abschnitt 8) - siehe A's
+# validate.yml fuer die Begruendung: pull_request = "Push"-Trigger
+# (inkrementell, gate fuer den Merge), push = "Merge"-Trigger (vollstaendig).
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+
+jobs:
+  validierung:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # aufweiss01 durch den tatsaechlichen GitHub-Kontonamen ersetzen, in dem
+      # C und H (Module C-H) liegen - dokumentierter Einrichtungsschritt.
+      - name: Modul C - DTD-/Referenzpruefung
+        uses: aufweiss01/dita_validation/.github/actions/validate@v1.0.0
+        with:
+          pfad: .
+          root: reuse/reusables.ditamap
+
+      - name: Pruefmodus fuer Modul D ermitteln (Push vs. Merge, Abschnitt 8)
+        id: d-modus
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            DATEIEN=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" -- '*.dita' '*.ditamap' | tr '\n' ' ')
+            echo "dateien=$DATEIEN" >> "$GITHUB_OUTPUT"
+          else
+            echo "dateien=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Modul D - Linkpruefung
+        uses: aufweiss01/link_validation/.github/actions/validate@v1.0.0
+        with:
+          pfad: .
+          dateien: ${{ steps.d-modus.outputs.dateien }}
+          timeout: '10'
+
+      # E und F sind optional (Abschnitt 5) und werden nur aufgerufen, wenn
+      # das Repository die zugehoerige Variable gesetzt hat
+      # (vars.USE_MODULE_E / vars.USE_MODULE_F, Abschnitt 6). Konstellation
+      # "B allein" (Abschnitt 6): B's eigene Dateien liegen an derselben
+      # Stelle, an der A seine erwarten wuerde - daher dieselbe einfache
+      # Form wie bei A, kein Sonderfall noetig.
+      - name: Modul E - Metadatenpruefung
+        if: vars.USE_MODULE_E == 'true'
+        uses: aufweiss01/metadata_validation/.github/actions/validate@v1.0.0
+        with:
+          pfad-a: .
+          pfad-b: ''
+
+      - name: Modul F - Terminologiepruefung
+        if: vars.USE_MODULE_F == 'true'
+        uses: aufweiss01/terminology_validation/.github/actions/validate@v1.0.0
+        with:
+          projekt-termbase: ''
+          geteilte-termbase: shared_termbase.tbx
+          pfad: .
+
+      # B selbst ruft merge_names.py nicht auf - das laeuft ausschliesslich
+      # in A's Pipeline (Abschnitt 6/7 B).

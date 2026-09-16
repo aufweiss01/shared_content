@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//OASIS//DTD DITA 1.3 Map//EN" "map.dtd">
+<map xml:lang="de-DE">
+  <title>Shared Reuse-Ressourcen</title>
+  <mapref href="reusable_image_refs.ditamap" format="ditamap"/>
+  <mapref href="shared_names.ditamap" format="ditamap"/>
+  <mapref href="../links/external_links.ditamap" format="ditamap"/>
+  <keydef keys="c_reuse"  href="c_reuse.dita"/>
+  <keydef keys="t_reuse"  href="t_reuse.dita"/>
+  <keydef keys="r_reuse"  href="r_reuse.dita"/>
+  <keydef keys="ts_reuse" href="ts_reuse.dita"/>
+  <keydef keys="warnings" href="warnings/warnings.dita"/>
+  <keydef keys="notes"    href="notes/notes.dita"/>
+</map>
