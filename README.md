@@ -1,27 +1,177 @@
 # shared_content
 
-Modul B - shared_content - fuer [Kundenname].
-Wird in Produktrepos (Modul A) optional als Git-Submodul unter shared/ eingebunden.
+Modul B aus dem modularisierten DITA-Dokumentenmanagement
+(Konfigurationsprotokoll v23, Abschnitt 7). Enthält die kundenweit
+wiederverwendbaren Bausteine für [Kundenname]. Wird in Produktrepos
+(Modul A) optional als Git-Submodul unter `shared/` eingebunden und muss
+eigenständig prüfbar sein – auch ohne eingebundenes Produktrepo.
+
+## Wofür dieses Repo zuständig ist – und wofür nicht
+
+- **Zuständig:** Kundenweite Bausteine (`reuse/`: `c_/t_/r_/ts_reuse.dita`,
+  Warnhinweise, allgemeine Hinweise, Bilder), kundenweite Keys
+  (`reuse/shared_names.ditamap`, `links/external_links.ditamap`),
+  kundenweite Override-Werte für Metadaten (`metadata/valuelists.xml`) und
+  Gestaltung (`publishing/design-values.xml`), kundenweit verbotene
+  Benennungen (`shared_termbase.tbx`).
+- **Nicht zuständig:** DTD-/Referenzprüfung (Modul C), Linkprüfung (D),
+  Metadaten-Regelprüfung (E), Terminologieprüfung (F), PDF-/HTML-
+  Publikation (G/H) – B ruft diese Module auf, implementiert ihre Logik
+  aber nicht selbst. Ebenfalls nicht in B: Titelseiten- und
+  Impressum-Topics (`titlepage.dita`, `imprint.dita`) – sie liegen in A.
 
 ## Struktur
-- reuse/            - Kundenweite wiederverwendbare Bausteine (c_reuse, t_reuse, r_reuse, ts_reuse)
-- reuse/warnings/   - Kundenweite Sicherheitshinweise (hazardstatement)
-- reuse/notes/      - Kundenweite allgemeine Hinweise
-- reuse/images/     - Kundenweit wiederverwendbare Bilder und Warnsymbole
-- links/            - Kundenweit genutzte externe Links als Keys
-- metadata/         - valuelists.xml - Override-Wertelisten fuer Modul E
-- publishing/       - design-values.xml - Override-Gestaltungswerte fuer Module G und H
-- shared_termbase.tbx - Kundenweit verbotene Benennungen fuer Modul F
+
+- `reuse/` – Kundenweite wiederverwendbare Bausteine (`c_reuse`, `t_reuse`,
+  `r_reuse`, `ts_reuse`) und die Keyspace-Map `reusables.ditamap`
+- `reuse/warnings/` – Kundenweite Sicherheitshinweise (`hazardstatement`)
+- `reuse/notes/` – Kundenweite allgemeine Hinweise
+- `reuse/images/` – Kundenweit wiederverwendbare Bilder und Warnsymbole
+- `links/` – Kundenweit genutzte externe Links als Keys
+- `metadata/` – `valuelists.xml`, Override-Wertelisten für Modul E
+- `publishing/` – `design-values.xml`, Override-Gestaltungswerte für
+  Module G und H
+- `shared_termbase.tbx` – Kundenweit verbotene Benennungen für Modul F
+- `.github/workflows/validate.yml` – Pipeline „B allein“ (Module C–F)
+- `.github/workflows/branch_guard.yml` – Aufruf des Wächters aus Modul J
+- `.github/CODEOWNERS` – Code Owner (siehe „Branch-Schutz und externe
+  Partner“)
 
 ## Wichtig
-B muss eigenstaendig gegen C, D, E, F pruefbar sein, auch ohne
-eingebundenes Produktrepo (siehe eigene Pipeline in .github/workflows/validate.yml).
-G und H (PDF- bzw. HTML-Publishing) werden separat aufgerufen, nicht
-als Teil dieser Push-Pipeline - fuer Vorschau/Kontrolle von B allein.
 
-reuse/shared_names.ditamap enthaelt wieder einen companyname-Keydef
-als kundenweiten Override. Der Merge mit A's Wert (A gewinnt bei
-Ueberschneidung) laeuft ueber ein eigenes Merge-Skript in A's
-Pipeline beim kombinierten Build - B stellt nur den Keydef bereit.
+B muss eigenständig gegen C, D, E, F prüfbar sein, auch ohne
+eingebundenes Produktrepo (eigene Pipeline in
+`.github/workflows/validate.yml`). G und H (PDF- bzw. HTML-Publishing)
+werden separat aufgerufen, nicht als Teil dieser Pipeline – für
+Vorschau/Kontrolle von B allein.
 
-Einrichtungsanleitung: siehe SETUP.md (sofern vorhanden)
+**`companyname` und Impressum-Keys:** `reuse/shared_names.ditamap`
+enthält kundenweite Keydefs als Override zu A: `companyname`, `legalname`,
+`street`, `housenumber`, `postalcode`, `addressaddition`, `city`,
+`website`, `email`. „Override“ bezeichnet nur B's Rolle (optional,
+kundenweit). Bei Überschneidung mit A gewinnt A; den Merge übernimmt
+`merge_names.py` in A's Pipeline – B stellt nur die Keydefs bereit.
+`businessunit` und `docdate` stehen bewusst nicht in B.
+
+## Einrichtung
+
+```cmd
+modul_b.bat [Kontoname]
+```
+
+Legt den Ordner `shared_content` neben der `.bat`-Datei an und bricht ab,
+wenn er bereits existiert.
+
+**GitHub-Kontoname:** Wird als Parameter übergeben oder beim Start
+abgefragt – gemeint ist das Konto, in dem die Module C bis J liegen.
+Erlaubt sind nur Buchstaben, Ziffern und Bindestrich, höchstens 39
+Zeichen, kein Bindestrich am Anfang oder Ende; bei ungültiger Eingabe
+bricht die `.bat` ab, bevor etwas angelegt wird. Der Name wird
+automatisch in die fünf `uses:`-Zeilen (`validate.yml`, `branch_guard.yml`)
+und in `CODEOWNERS` eingesetzt; die Vorlagen enthalten nur einen
+Platzhalter. Dafür wird PowerShell benötigt (unter Windows vorhanden).
+
+**Bereits angelegtes Repo (z. B. Pilot):** `modul_b.bat` nicht im
+bestehenden Repo ausführen. Stattdessen in einem leeren Ordner neu
+erzeugen (gleicher Kontoname) und nur die geänderten Dateien in den
+lokalen Klon des bestehenden Repos übernehmen:
+
+- Ganze Dateien kopieren: `.github/workflows/validate.yml`,
+  `.github/workflows/branch_guard.yml`, `.github/CODEOWNERS`,
+  `README.md`, `OPEN_ISSUES.md`.
+- Von Hand ergänzen (nicht kopieren, sonst gehen echte Inhalte
+  verloren): in `metadata/valuelists.xml` und `publishing/design-values.xml`
+  jeweils die `DOCTYPE`-Zeile unter der XML-Deklaration; in
+  `reuse/shared_names.ditamap` die Keydefs `website` und `email`.
+
+Auf einem eigenen Branch per `git diff` prüfen und per Pull Request gegen
+`develop` einbringen.
+
+## CI/CD-Pipeline (`validate.yml`)
+
+Trigger: `pull_request` auf `develop` und `main` (inkrementelle Prüfung
+vor dem Merge) und `push` auf `develop` (vollständiger Scan nach dem
+Merge). Der Trigger für Pull Requests gegen `main` ist neu
+(28.09.2026) – dort ist der Job `validierung` erforderlicher Check.
+Ruft Modul C (`--root reuse/reusables.ditamap`, immer voller Lauf),
+Modul D (`--files`/`--input` je nach Event) sowie optional Module E/F auf
+(`vars.USE_MODULE_E` / `vars.USE_MODULE_F`). Den Kontonamen in den vier
+`uses:`-Zeilen setzt `modul_b.bat` ein (siehe „Einrichtung“). Die Version
+von Modul C ist `v1.0.1`, die von D, E, F `v1.0.0`.
+
+## Branch-Schutz und externe Partner
+
+Externe Partner arbeiten mit der Rolle **Write** direkt in diesem Repo.
+Geschützt wird über zwei Mechanismen: Rulesets mit Code-Owner-Freigabe
+(GitHub-Einstellungen, keine Dateien) und den Wächter aus Modul J
+(`partner_collaboration`), der Pull Requests nach `main` nur von
+`develop` oder `hotfix/*` und nur aus diesem Repo zulässt (keine Forks).
+
+**Zugehörige Dateien:**
+
+- `.github/CODEOWNERS` – Code Owner für alle Dateien (`*`) und eigens für
+  `/.github/`. Von `modul_b.bat` mit dem angegebenen Kontonamen erzeugt;
+  bei Organisationen ggf. von Hand auf ein Team (`@organisation/team`)
+  umstellen. GitHub liest immer die Fassung auf dem **Zielbranch** des
+  Pull Requests – die Datei muss daher auf `develop` **und** `main`
+  liegen.
+- `.github/workflows/branch_guard.yml` – dünne Aufruferdatei, Trigger
+  `pull_request_target` gegen `main`, Job `branch-guard` (Name des
+  erforderlichen Checks). Kontoname in der `uses:`-Zeile von
+  `modul_b.bat` eingesetzt. Kein Checkout von Pull-Request-Code
+  (Sicherheit bei `pull_request_target`). Erlaubte Quellbranches:
+  Standardwert aus Modul J (`develop,hotfix/*`).
+
+**Einrichtung durch den Administrator – Reihenfolge einhalten:**
+
+- **a)** **Standardbranch** auf `develop` stellen (Settings > General >
+  Default branch).
+- **b)** `CODEOWNERS`, `validate.yml` und `branch_guard.yml` per Pull
+  Request gegen `develop` einbringen.
+- **c)** Einmal Pull Request `develop` → `main`, damit die Dateien auch
+  auf `main` liegen. Der Wächter läuft bei diesem ersten Pull Request noch
+  nicht – `pull_request_target` liest die Workflow-Datei vom Zielbranch,
+  und dort liegt sie erst nach diesem Merge.
+- **d)** Erst danach in `main-protect` die Checks `validierung` und
+  `branch-guard` als erforderlich eintragen – sie stehen erst nach einem
+  ersten Lauf zur Auswahl (siehe `OPEN_ISSUES.md`).
+- **e)** `develop-protect` und `main-protect`: Code-Owner-Freigabe
+  verlangen, 1 Freigabe. Bypass nur für die Rolle „Repository admin“,
+  Modus „nur für Pull Requests“ (nötig, weil GitHub Autoren ihre eigenen
+  Pull Requests nicht freigeben lässt). Bei einem Repo im persönlichen
+  Konto prüfen, ob diese Rolle wählbar ist (siehe `OPEN_ISSUES.md`).
+- **f)** Eigenes Ruleset für `hotfix/*` mit „Restrict creations“ – Bypass
+  wie oben, damit nur der Administrator Hotfix-Branches anlegt.
+- **g)** Settings > Actions > General: Workflows aus Fork-Pull-Requests
+  nur nach Freigabe ausführen, Einstellung sinngemäß „Require approval for
+  all outside collaborators“ (Bezeichnung kann je nach GitHub-Stand
+  abweichen, z. B. „external contributors“).
+- **h)** Erst danach Partner einladen (Settings > Collaborators, Rolle
+  **Write**). In einem öffentlichen Repo **keinen** `SUBMODULE_PAT`
+  hinterlegen.
+- **i)** **Voraussetzung für private Repos:** Bei GitHub Free wirken
+  Rulesets nur in öffentlichen Repos. Private Nutzung mit externen
+  Partnern setzt GitHub Team voraus.
+
+**Hotfix-Ablauf:** Der Administrator legt `hotfix/…` von `main` aus an,
+Pull Request `hotfix/…` → `main`, danach von Hand Pull Request `main` →
+`develop`, damit die Korrektur auch in `develop` ankommt. Eine
+Automatik für die Rückführung ist bewusst zurückgestellt.
+
+## Betrieb als Submodul unter `shared/` in A
+
+Ist B in A als Submodul eingebunden, gehören die Dateien unter
+`shared/.github/` nicht zum Dateibaum von A (A enthält nur einen Verweis
+auf einen Commit von B). Daraus folgt:
+
+- Die Workflows aus B (`validate.yml`, `branch_guard.yml`) laufen in A
+  **nicht** – GitHub führt nur Workflows aus `.github/workflows/` im
+  Wurzelverzeichnis des jeweiligen Repos aus.
+- `CODEOWNERS` aus B wirkt nur im Repo B selbst. In A gilt A's eigene
+  Datei; eine Änderung des Submodul-Verweises fällt dort unter `*`.
+- Der Schutz von B (Rulesets, Code-Owner-Freigabe, Wächter) wird
+  ausschließlich in B eingerichtet. Änderungen an B gehen zuerst durch B's
+  Pull Requests; erst danach aktualisiert A den Verweis per eigenem Pull
+  Request.
+- Die Prüfmodule in A durchsuchen `shared/` nur nach `.dita`-, `.ditamap`-
+  bzw. `.tbx`-Dateien; `.github/` wird dabei nicht erfasst.
